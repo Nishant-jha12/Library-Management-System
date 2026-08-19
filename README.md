@@ -197,12 +197,6 @@ Contributions, issues, and feature requests are welcome!
 
 ---
 
-## 📄 License
-
-Distributed under the **MIT License**. See `LICENSE` for more information.
-
----
-
 <div align="center">
   <sub>Built with ❤️ by Nishant Kumar Jha & Team</sub>
 </div>
