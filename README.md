@@ -111,10 +111,10 @@ Searching large library catalogues using traditional linear structures (arrays/l
 ### 👥 Test Student Accounts
 | Student Name | University ID / Password | Department |
 | :--- | :--- | :--- |
-| **Nishant Kumar Jha** | `Nkj@123` | B.Tech - ICT |
-| **Pratiksha Sinha** | `Ps@123` | B.Tech - CSE |
-| **Anushaka Kumari** | `Ak@123` | B.Tech - ECE |
-| **Amtul Rula Shaikh** | `Ars@123` | B.Tech - IT |
+| **Nishant Kumar Jha** | `Nkj@123` | B.Tech - AIDS|
+| **Pratiksha Sinha** | `Ps@123` | B.Tech - AIDS |
+| **Anushaka Kumari** | `Ak@123` | B.Tech - AIDS |
+| **Amtul Rula Shaikh** | `Ars@123` | B.Tech - AIDS |
 
 ---
 
