@@ -442,13 +442,67 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
 
   getMetrics: () => {
     const { books, issuedRecords } = get();
-    const now = Date.now();
-    const totalTitles = books.length;
-    const totalBooks = books.reduce((sum, b) => sum + b.totalCopies, 0);
-    const availableCount = books.reduce((sum, b) => sum + b.availableCopies, 0);
-    const activeRecords = issuedRecords.filter(r => !r.returnedAt);
-    const issuedCount = activeRecords.length;
-    const overdueCount = activeRecords.filter(r => r.dueDate < now).length;
-    return { totalTitles, totalBooks, availableCount, issuedCount, overdueCount };
+    const activeIssues = issuedRecords.filter(r => !r.returnedAt);
+    const overdueCount = activeIssues.filter(r => r.dueDate < Date.now()).length;
+    
+    return {
+      totalBooks: books.reduce((sum, b) => sum + b.totalCopies, 0),
+      availableCount: books.reduce((sum, b) => sum + b.availableCopies, 0),
+      issuedCount: activeIssues.length,
+      overdueCount,
+      totalTitles: books.length
+    };
   }
 }));
+
+import { db } from '../firebase';
+import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+
+const STATE_DOC = doc(db, "appData", "mainState");
+
+let isRemoteUpdate = false;
+
+onSnapshot(STATE_DOC, (docSnap) => {
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    isRemoteUpdate = true;
+    useLibraryStore.setState({
+      books: data.books || [],
+      students: data.students || [],
+      issuedRecords: data.issuedRecords || [],
+      pendingNotifications: data.pendingNotifications || [],
+      studentNotifications: data.studentNotifications || []
+    });
+    isRemoteUpdate = false;
+  } else {
+    // initialize with mock data if doc doesn't exist
+    const state = useLibraryStore.getState();
+    setDoc(STATE_DOC, {
+      books: state.books,
+      students: state.students,
+      issuedRecords: state.issuedRecords,
+      pendingNotifications: state.pendingNotifications,
+      studentNotifications: state.studentNotifications
+    });
+  }
+});
+
+useLibraryStore.subscribe((state, prevState) => {
+  if (isRemoteUpdate) return;
+  // If any synced data changed, push to Firebase
+  if (
+    state.books !== prevState.books ||
+    state.students !== prevState.students ||
+    state.issuedRecords !== prevState.issuedRecords ||
+    state.pendingNotifications !== prevState.pendingNotifications ||
+    state.studentNotifications !== prevState.studentNotifications
+  ) {
+    setDoc(STATE_DOC, {
+      books: state.books,
+      students: state.students,
+      issuedRecords: state.issuedRecords,
+      pendingNotifications: state.pendingNotifications,
+      studentNotifications: state.studentNotifications
+    }, { merge: true }).catch(err => console.error("Firebase sync error:", err));
+  }
+});
