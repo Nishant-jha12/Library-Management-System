@@ -144,20 +144,21 @@ export const IssueReturnFlow: React.FC<IssueReturnFlowProps> = ({ book, isOpen, 
                   )}
 
                   {!isIssued ? (
-                    <motion.button
-                      whileHover={canIssue ? { scale: 1.02 } : {}}
-                      whileTap={canIssue ? { scale: 0.98 } : {}}
-                      onClick={handleIssue}
-                      disabled={!canIssue || book.availableCopies === 0}
-                      style={{
-                        width: '100%', padding: '1rem', borderRadius: '0.75rem', border: 'none',
-                        backgroundColor: canIssue && book.availableCopies > 0 ? 'var(--obsidian)' : 'var(--text-muted)',
-                        color: 'var(--surface)', fontWeight: 600, fontSize: '1rem', cursor: canIssue && book.availableCopies > 0 ? 'pointer' : 'not-allowed',
-                        display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem'
-                      }}
-                    >
-                      <BookOpen size={20} /> Issue Book
-                    </motion.button>
+                      <motion.button
+                        whileHover={canIssue && book.availableCopies > 0 ? { scale: 1.02 } : {}}
+                        whileTap={canIssue && book.availableCopies > 0 ? { scale: 0.98 } : {}}
+                        onClick={handleIssue}
+                        disabled={!canIssue || book.availableCopies === 0}
+                        style={{
+                          width: '100%', padding: '1rem', borderRadius: '0.75rem', border: 'none',
+                          backgroundColor: canIssue && book.availableCopies > 0 ? 'var(--emerald)' : 'var(--border)',
+                          color: canIssue && book.availableCopies > 0 ? '#fff' : 'var(--text-muted)',
+                          fontWeight: 600, fontSize: '1rem', cursor: canIssue && book.availableCopies > 0 ? 'pointer' : 'not-allowed',
+                          display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem'
+                        }}
+                      >
+                        <BookOpen size={20} /> Issue Book
+                      </motion.button>
                   ) : (
                     <div style={{ padding: '1rem', backgroundColor: 'var(--surface-raised)', borderRadius: '0.75rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
                       This book is currently issued to you. You can return it from the Returns page.
@@ -214,11 +215,11 @@ export const IssueReturnFlow: React.FC<IssueReturnFlowProps> = ({ book, isOpen, 
                     </div>
                     
                     <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={damageDesc ? { scale: 1.02 } : {}}
+                      whileTap={damageDesc ? { scale: 0.98 } : {}}
                       onClick={handleSubmitDamage}
                       disabled={!damageDesc}
-                      style={{ width: '100%', marginTop: '1.5rem', padding: '0.75rem', borderRadius: '0.5rem', border: 'none', backgroundColor: damageDesc ? 'var(--obsidian)' : 'var(--border)', color: damageDesc ? 'var(--surface)' : 'var(--text-muted)', fontWeight: 600, cursor: damageDesc ? 'pointer' : 'not-allowed' }}
+                      style={{ width: '100%', marginTop: '1.5rem', padding: '0.75rem', borderRadius: '0.5rem', border: 'none', backgroundColor: damageDesc ? 'var(--emerald)' : 'var(--border)', color: damageDesc ? '#fff' : 'var(--text-muted)', fontWeight: 600, cursor: damageDesc ? 'pointer' : 'not-allowed' }}
                     >
                       Submit Report
                     </motion.button>
