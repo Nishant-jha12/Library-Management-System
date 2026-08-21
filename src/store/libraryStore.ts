@@ -317,6 +317,11 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     const student = get().students.find(s => s.id === studentId);
     if (!student) return false;
     if (student.fines > 0 && student.fineWarnings >= MAX_WARNINGS_BEFORE_BLOCK) return false;
+    
+    // Check limit of 2 books
+    const activeIssues = get().issuedRecords.filter(r => r.studentId === studentId && !r.returnedAt);
+    if (activeIssues.length >= 2) return false;
+    
     return true;
   },
 

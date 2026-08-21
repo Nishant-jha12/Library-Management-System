@@ -139,7 +139,11 @@ export const IssueReturnFlow: React.FC<IssueReturnFlowProps> = ({ book, isOpen, 
                   {!canIssue && !isIssued && (
                     <div style={{ padding: '1rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid var(--crimson)', borderRadius: '0.75rem', color: 'var(--crimson)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
                       <AlertTriangle size={20} />
-                      <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>Cannot issue book. You have outstanding fines or restrictions.</span>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>
+                        {store.getStudentIssuedRecords(student.id).length >= 2 
+                          ? "Cannot issue book. You have reached the maximum limit of 2 books."
+                          : "Cannot issue book. You have outstanding fines or restrictions."}
+                      </span>
                     </div>
                   )}
 
