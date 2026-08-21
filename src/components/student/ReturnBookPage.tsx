@@ -6,7 +6,7 @@ import { useLibraryStore } from '../../store/libraryStore';
 import { MorphButton } from '../ui/MorphButton';
 
 export const ReturnBookPage: React.FC = () => {
-  const { loggedInStudentId, students, books, getStudentIssuedRecords, initiateReturn, payFine } = useLibraryStore();
+  const { loggedInStudentId, students, books, getStudentIssuedRecords, initiateReturn, payFine, reissueBook } = useLibraryStore();
 
   const student = students.find(s => s.id === loggedInStudentId);
   
@@ -23,6 +23,10 @@ export const ReturnBookPage: React.FC = () => {
 
   const handleReturn = async (bookId: string) => {
     await initiateReturn(bookId, student.id);
+  };
+
+  const handleReissue = async (recordId: string) => {
+    await reissueBook(recordId);
   };
 
   const handlePayFine = async () => {
@@ -192,7 +196,15 @@ export const ReturnBookPage: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    <div style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+                    <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {record.dueDate - Date.now() <= 24 * 60 * 60 * 1000 && !isOverdue && (
+                        <MorphButton
+                          label="Reissue Book"
+                          loadingLabel="Reissuing..."
+                          variant="violet"
+                          onAction={() => handleReissue(record.id)}
+                        />
+                      )}
                       <MorphButton
                         label="Return Book"
                         loadingLabel="Initiating..."

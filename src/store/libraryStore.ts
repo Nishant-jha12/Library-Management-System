@@ -7,7 +7,7 @@ import {
   query, writeBatch, getDoc
 } from 'firebase/firestore';
 
-const LOAN_PERIOD_DAYS = 14;
+const LOAN_PERIOD_DAYS = 7;
 const GRACE_PERIOD_HOURS = 1;
 const DAILY_FINE_RUPEES = 10;
 const EXTRA_FINE_AFTER_5_DAYS = 5;
@@ -99,6 +99,7 @@ interface LibraryState {
 
   issueBook: (bookId: string, studentId: string) => Promise<{ pin: string } | null>;
   initiateReturn: (bookId: string, studentId: string) => Promise<{ pin: string; estimatedFine: number } | null>;
+  reissueBook: (recordId: string) => Promise<boolean>;
   verifyReturn: (recordId: string, pin: string) => boolean;
   canIssueBook: (studentId: string) => boolean;
 
@@ -262,6 +263,42 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     });
     await batch.commit().catch(console.error);
     return { pin: returnPin, estimatedFine };
+  },
+
+  reissueBook: async (recordId: string) => {
+    await new Promise(r => setTimeout(r, 1000));
+    const state = get();
+    const now = Date.now();
+    const record = state.issuedRecords.find(r => r.id === recordId && !r.returnedAt);
+    if (!record) return false;
+
+    // A book can only be reissued if it's within 1 day of deadline
+    const oneDayInMs = 24 * 60 * 60 * 1000;
+    if (record.dueDate - now > oneDayInMs) return false;
+    
+    // Add 7 days to the *current* due date
+    const newDueDate = record.dueDate + 7 * 24 * 60 * 60 * 1000;
+    
+    const student = state.students.find(s => s.id === record.studentId);
+    const book = state.books.find(b => b.id === record.bookId);
+
+    set({
+      issuedRecords: state.issuedRecords.map(r =>
+        r.id === recordId ? { ...r, dueDate: newDueDate } : r
+      ),
+    });
+
+    const batch = writeBatch(db);
+    batch.update(doc(recordsCol, recordId), { dueDate: newDueDate });
+    const notifId = `notif-reissue-${now}`;
+    batch.set(doc(libNotifCol, notifId), {
+      id: notifId,
+      message: `📅 ${student?.name || 'A student'} has reissued "${book?.title}". New due date: ${new Date(newDueDate).toLocaleDateString()}`,
+      timestamp: now,
+      read: false,
+    });
+    await batch.commit().catch(console.error);
+    return true;
   },
 
   verifyReturn: (recordId, pin) => {
