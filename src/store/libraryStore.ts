@@ -346,6 +346,12 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
       message: `✅ Book "${book?.title}" has been returned successfully!`,
       read: false,
     });
+    
+    const notif = state.pendingNotifications.find(n => n.message.includes(`Return PIN: ${pin}`));
+    if (notif) {
+      batch.update(doc(libNotifCol, notif.id), { read: true });
+    }
+    
     batch.commit().catch(console.error);
     return true;
   },
@@ -363,10 +369,21 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
   },
 
   verifyPin: (recordId, pin) => {
-    const record = get().issuedRecords.find(r => r.id === recordId);
+    const state = get();
+    const record = state.issuedRecords.find(r => r.id === recordId);
     if (!record || record.pin !== pin) return false;
-    set({ issuedRecords: get().issuedRecords.map(r => r.id === recordId ? { ...r, verified: true } : r) });
-    updateDoc(doc(recordsCol, recordId), { verified: true }).catch(console.error);
+    
+    set({ issuedRecords: state.issuedRecords.map(r => r.id === recordId ? { ...r, verified: true } : r) });
+    
+    const batch = writeBatch(db);
+    batch.update(doc(recordsCol, recordId), { verified: true });
+    
+    const notif = state.pendingNotifications.find(n => n.message.includes(`PIN: ${pin}`));
+    if (notif) {
+      batch.update(doc(libNotifCol, notif.id), { read: true });
+    }
+    batch.commit().catch(console.error);
+    
     return true;
   },
 
@@ -526,6 +543,7 @@ onSnapshot(query(recordsCol), (snap) => {
 onSnapshot(query(libNotifCol), (snap) => {
   const pendingNotifications = snap.docs
     .map(d => d.data() as LibNotification)
+    .filter(n => !n.read)
     .sort((a, b) => b.timestamp - a.timestamp)
     .slice(0, 50);
   useLibraryStore.setState({ pendingNotifications });

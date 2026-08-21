@@ -9,6 +9,7 @@ export const PendingVerifications: React.FC = () => {
   
   const [pinInputs, setPinInputs] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [toastMessage, setToastMessage] = useState('');
 
   const handleVerify = (recordId: string, isReturn: boolean) => {
     const pin = pinInputs[recordId];
@@ -30,6 +31,8 @@ export const PendingVerifications: React.FC = () => {
         delete newInputs[recordId];
         return newInputs;
       });
+      setToastMessage('PIN verified successfully!');
+      setTimeout(() => setToastMessage(''), 3000);
     } else {
       setErrors(prev => ({ ...prev, [recordId]: 'Incorrect PIN' }));
     }
@@ -147,6 +150,35 @@ export const PendingVerifications: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+            style={{
+              position: 'fixed',
+              bottom: '2rem',
+              right: '2rem',
+              background: 'var(--emerald)',
+              color: '#030a06',
+              padding: '1rem 1.5rem',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              boxShadow: '0 8px 32px rgba(0, 232, 122, 0.3)',
+              fontWeight: 600,
+              zIndex: 1000
+            }}
+          >
+            <CheckCircle size={20} />
+            {toastMessage}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
