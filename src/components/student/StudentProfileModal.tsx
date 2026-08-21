@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Upload, User, Phone, BookOpen, AlertCircle } from 'lucide-react';
+import { X, Upload, User, Phone, BookOpen, AlertCircle, Lock, Eye, EyeOff } from 'lucide-react';
 import { useLibraryStore } from '../../store/libraryStore';
 import { MorphButton } from '../ui/MorphButton';
 
@@ -17,6 +17,8 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({ isOpen
   
   const [phone, setPhone] = useState(student?.phone || '');
   const [photoUrl, setPhotoUrl] = useState(student?.photoUrl || '');
+  const [newPassword, setNewPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isHoveringPhoto, setIsHoveringPhoto] = useState(false);
 
   useEffect(() => {
@@ -42,7 +44,10 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({ isOpen
   };
 
   const handleSave = async () => {
-    await updateStudentProfile(student.id, { phone, photoUrl });
+    const updates: any = { phone, photoUrl };
+    if (newPassword) updates.password = newPassword;
+    await updateStudentProfile(student.id, updates);
+    setNewPassword('');
     onClose();
   };
 
@@ -184,6 +189,41 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({ isOpen
                       style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem 1rem 0.75rem 2.5rem', background: 'var(--surface)', border: '1px solid var(--border-bright)', borderRadius: '0.5rem', color: 'var(--text-primary)' }} 
                       placeholder="Enter phone number"
                     />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="label-sm" style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Change Password</label>
+                  <div style={{ position: 'relative' }}>
+                    <Lock size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="input-field"
+                      style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem 2.75rem', background: 'var(--surface)', border: '1px solid var(--border-bright)', borderRadius: '0.5rem', color: 'var(--text-primary)' }}
+                      placeholder="Enter new password (optional)"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: 'absolute',
+                        right: '0.75rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: '0.25rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                   </div>
                 </div>
               </div>

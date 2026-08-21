@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, User, Lock, Moon, Sun, Shield } from 'lucide-react';
+import { BookOpen, User, Lock, Moon, Sun, Shield, Eye, EyeOff } from 'lucide-react';
 import { useLibraryStore } from '../../store/libraryStore';
 
 export const LoginScreen: React.FC = () => {
@@ -10,6 +10,7 @@ export const LoginScreen: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,14 +171,34 @@ export const LoginScreen: React.FC = () => {
             <div style={{ position: 'relative' }}>
               <Lock size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 className="input-field"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                style={{ width: '100%', paddingLeft: '2.75rem' }}
+                style={{ width: '100%', paddingLeft: '2.75rem', paddingRight: '2.75rem' }}
                 placeholder="••••••••"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '0.75rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '0.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 

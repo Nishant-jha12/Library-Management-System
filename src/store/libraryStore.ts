@@ -89,7 +89,7 @@ interface LibraryState {
   toggleTheme: () => void;
 
   addStudent: (student: Omit<Student, 'id' | 'fines' | 'fineWarnings'>) => void;
-  updateStudentProfile: (studentId: string, updates: { phone?: string; photoUrl?: string }) => void;
+  updateStudentProfile: (studentId: string, updates: { phone?: string; photoUrl?: string; password?: string }) => void;
 
   setSearchQuery: (query: string) => void;
   setSelectedGenre: (genre: BookGenre | 'All') => void;
