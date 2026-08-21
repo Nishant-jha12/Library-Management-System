@@ -59,7 +59,7 @@ function App() {
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
                 Digital Sanctuary
               </div>
-              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', marginTop: '2px' }}>
+              <div className="hide-on-mobile" style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', marginTop: '2px' }}>
                 BST-POWERED LIBRARY SYSTEM
               </div>
             </div>
@@ -115,12 +115,12 @@ function App() {
             </motion.button>
 
             {/* System Live */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div className="hide-on-mobile" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span className="avail-pulse" style={{ display: 'block', width: '7px', height: '7px', borderRadius: '50%', background: 'var(--emerald)' }} />
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>Live</span>
             </div>
             
-            <div style={{ width: '1px', height: '16px', background: 'var(--border)' }} />
+            <div className="hide-on-mobile" style={{ width: '1px', height: '16px', background: 'var(--border)' }} />
 
             {/* Logout */}
             <motion.button
